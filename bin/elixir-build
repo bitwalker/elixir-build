@@ -275,7 +275,7 @@ list_custom_definitions() {
 list_definitions() {
   {
     local items=()
-    for i in $(curl -s https://api.github.com/repos/elixir-lang/elixir/releases | ./json | egrep '\[\d+,"assets",\d+,"browser_download_url"\]' | tr "\t" "\n"); do
+    for i in $(curl -s https://api.github.com/repos/elixir-lang/elixir/releases | ${ELIXIR_BUILD_ROOT}/bin/json | egrep '\[\d+,"assets",\d+,"browser_download_url"\]' | tr "\t" "\n"); do
       items+=($i)
     done
 
@@ -411,7 +411,8 @@ if [ ! $IS_REMOTE_DEFINITION ]; then
   source "$DEFINITION_PATH"
 else
   mkdir -p "$BUILD_PATH"
-  install_package "elixir-$DEFINITION_PATH" "https://github.com/elixir-lang/elixir/archive/v$DEFINITION_PATH.tar.gz"
+  DEFINITION_NAME="${DEFINITION_PATH##*/}"
+  install_package "elixir-${DEFINITION_NAME}" "https://github.com/elixir-lang/elixir/archive/${DEFINITION_NAME}.tar.gz"
 fi
 [ -z "${KEEP_BUILD_PATH}" ] && rm -fr "$BUILD_PATH"
 trap - ERR
